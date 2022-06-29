@@ -1,5 +1,7 @@
 from Tipe import *
 
+
+
 def mat_ali_gotoh (seqA, seqB, gap_start = 10, gap_extend = 0.5, sim_mat = sim_new, print_seq = False) :
     """
     Utilise l'algorithme de Gotoh pour déterminer la matrice des meilleurs alignements entre
@@ -28,31 +30,21 @@ def mat_ali_gotoh (seqA, seqB, gap_start = 10, gap_extend = 0.5, sim_mat = sim_n
            se termine sur l'association ('_' / b_j)
 
     """
-    mat = []
-    matA = []
-    matB = []
-    for i in range (len(seqA) + 1):
-        mat2 = []
-        mat2B = []
-        mat2A = []
-        for j in range (len(seqB) + 1):
-            if j * i == 0 :
-                case = - gap_start - gap_extend * (max(j,i) - 1)
-                if i == 0 :
-                    caseB = - math.inf
-                    caseA = None
-                else :
-                    caseB = None
-                    caseA = - math.inf
-            else :
-
-                caseB = max(mat[i - 1][j] - gap_start,
-                            matB[i - 1][j] - gap_extend)
-                caseA = max(mat2[j - 1] - gap_start,
-                            mat2A[j - 1] - gap_extend)
-                case = max (mat[i - 1][j - 1] + sim_mat[dico(seqA[i - 1])][dico(seqB[j - 1])],                            
-                             caseB,
-                             caseA)
+    mat = [[0] + [- gap_start - (i - 1) * gap_extend for i in range(1,len(seqA) + 1)]]
+    matA = [[]]
+    matB = [[- math.inf] * (len(seqA) + 1)]
+    for i in range (1,len(seqA) + 1):
+        mat2 = [-gap_start - (i - 1) * gap_extend]
+        mat2B = [None]
+        mat2A = [- math.inf]
+        for j in range (1,len(seqB) + 1):
+            caseB = max(mat[i - 1][j] - gap_start,
+                        matB[i - 1][j] - gap_extend)
+            caseA = max(mat2[j - 1] - gap_start,
+                        mat2A[j - 1] - gap_extend)
+            case = max (mat[i - 1][j - 1] + sim_mat[dico(seqA[i - 1])][dico(seqB[j - 1])],                            
+                        caseB,
+                        caseA)
             mat2.append(case)
             mat2B.append(caseB)
             mat2A.append(caseA)
