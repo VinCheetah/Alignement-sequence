@@ -24,18 +24,12 @@ def mat_ali_NW (seqA, seqB, gap = 2, sim_mat = sim_mat_2) :
     mat : matrice avec m[i][j] le meilleur score pour l'alignement de seqA[:i] et seqB[:j]
 
     """
-    mat = []
+    mat = [[- i * gap for i in range(len(seqA) + 1)]]
     for i in range (1,len(seqA) + 1):
-        mat2 = []
+        mat2 = [- i * gap]
         for j in range (1,len(seqB) + 1):
-            if i == 0 :
-                case = - j * gap
-            elif j == 0 :
-                case = - i * gap
-            else :
-                case = max (mat[- 1][j - 1] + sim_mat[dico (seqA[i - 1])][dico (seqB[j - 1])],
-                            max (mat[- 1][j], mat2[-1]) - gap)
-            mat2.append(case)
+            mat2.append(max (mat[- 1][j - 1] + sim_mat[dico (seqA[i - 1])][dico (seqB[j - 1])],
+                        max (mat[- 1][j], mat2[-1]) - gap))
         mat.append(mat2)
     return mat
   
@@ -84,42 +78,3 @@ def ali_NW (seqA, seqB, gap = 2, sim_mat = sim_mat_2) :
         j -= 1
     return aliA, aliB, mat[len(seqA)][len(seqB)]
 
-
-def mat_ali_NW (seqA, seqB, gap = 2, sim_mat = sim_mat_2) :
-    mat = []
-    for i in range (len(seqA) + 1):
-        mat2 = []
-        for j in range (len(seqB) + 1):
-            if i == 0 :
-                case = - j * gap
-            elif j == 0 :
-                case = - i * gap
-            else :
-                case = max (mat[- 1][j - 1] + sim_mat[dico (seqA[i - 1])][dico (seqB[j - 1])],
-                            max (mat[- 1][j], mat2[-1]) - gap)
-            mat2.append(case)
-        mat.append(mat2)
-    return mat
-  
-
-def ali_NW (seqA, seqB, gap = 2, sim_mat = sim_mat_2) :
-    mat = mat_ali_NW(seqA, seqB,gap,sim_mat)
-    aliA, aliB, i, j = "", "", len(seqA), len(seqB)
-    while i > 0 and j > 0 :
-        if mat[i][j] == mat[i - 1][j] - gap :
-            aliA, aliB = seqA[i - 1] + aliA, "_" + aliB
-            i -= 1
-        elif mat[i][j] == mat[i][j - 1] - gap :
-            aliB, aliA = seqB[j - 1] + aliB, "_" + aliA     
-            j -= 1
-        elif mat[i][j] == mat[i - 1][j - 1] + sim_mat[dico (seqA[i - 1])][dico (seqB[j - 1])]:
-            aliA, aliB = seqA[i - 1] + aliA, seqB[j - 1] + aliB
-            i -= 1
-            j -= 1
-    while i > 0 :
-        aliA, aliB = seqA[i - 1] + aliA, "_" + aliB
-        i -= 1
-    while j > 0 :
-        aliB, aliA = seqB[j - 1] + aliB, "_" + aliA     
-        j -= 1
-    return aliA, aliB, mat[len(seqA)][len(seqB)]
